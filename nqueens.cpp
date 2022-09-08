@@ -14,6 +14,7 @@
 #include <fstream>
 #include <vector>
 #include <cstring>
+#include <cctype> // isdigit() and isprint()
 
 using std::ifstream;
 using std::cout;
@@ -21,45 +22,19 @@ using std::cin;
 using std::vector;
 
 void readFile(std::ifstream &inStream, vector<vector<bool>> &chessBoard, int N); 
-int findN(std::ifstream &inStream);
+int findN();
 void display(const vector<vector<bool>> &chessBoard);
 
 int main()
 {
-    // in-file pointer
-    std::ifstream inStream;
-  
-    // flag for loops
-    bool isValid;
-
-    // prompt for dimensions
-    int N = 0;
-    cout << "Enter the dimensions (N) for the chessBoard (assumes square layout): ";
-
-    // validate dimensions
-    do 
-    {
-        isValid = true;
-        
-        cin >> N;
-        if (cin.fail() || N < 0)
-        {
-            cout << "invalid entry: ";
-            isValid = false;
-            
-            cin.clear();
-            cin.ignore(10000, '\n');
-        }
-    } while (!isValid);
-  
-    // open the file 
-    inStream.open("input.csv");
+    // declare and initialize in-file stream
+    ifstream inStream("input.csv");
 
     // if file was successfully opened
     if (inStream)
     {
         // find what N is for the .csv input (assumes a square layout)
-        //int N = findN(inStream);
+        int N = findN();
         
         // define a 2d vector (vector of vectors of bools)
         vector<vector<bool>> chessBoard;
@@ -67,6 +42,9 @@ int main()
         // pass in the stream object and 2d vector by ref,
         // and the dimensions of the board
         readFile(inStream, chessBoard, N);
+
+        // close the file stream
+        inStream.close();
 
         // echo the chessboard structure to standard output
         display(chessBoard);
@@ -96,28 +74,35 @@ void readFile(std::ifstream &inStream, vector<vector<bool>> &chessBoard, int N)
         chessBoard.push_back(temp);
     }
 
-    // close the file stream
-    inStream.close();
-
     return;
 }
 
-/*
-int findN(std::ifstream &inStream)
+int findN()
 {
-    char temp; 
-    int N = 0;
+    // declare and initialize temp file stream
+    ifstream temp("input.csv");
 
-    while (N != '\n')
+    // char to hold input and N to hold width
+    char getChar; 
+    int N = 0;
+    
+    // loop reads number of 1's or 0's in first line to find N (assumes square)
+    do
     {
-        inStream.get(temp);
-        ++N;
-    }
+        getChar = temp.get();
+
+        // increment N if char is a digit (1 or 0)
+        if (isdigit(getChar))
+        {
+            ++N;
+        }
+    } while (isprint(getChar)); // end if char is not printable
+
+    temp.close();
 
     return N;
  }
- */
-
+ 
  void display(const vector<vector<bool>> &chessBoard)
  {
     // chessBoard[i].size() checks the size of the vector rows
