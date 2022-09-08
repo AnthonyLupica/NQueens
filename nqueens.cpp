@@ -5,6 +5,9 @@
     purpose: solve the NQueens problem using the backtracking algorithm for some .csv input 
              representing a chessboard of size N x N. If a solution is found for N queens, 
              a .csv solution is produced. Otherwise, no solution is displayed.
+    
+    Information: This program was built and tested in an Ubuntu shell. It will ask the user to specify the name
+                 of the .csv (and path if necessary), as well as the dimensions of the board.
 */
 
 #include <iostream>
