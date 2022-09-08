@@ -13,7 +13,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cstring>
 #include <cctype> // isdigit() and isprint()
 
 using std::ifstream;
