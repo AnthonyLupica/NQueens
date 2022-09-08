@@ -145,7 +145,7 @@ int findN(std::ifstream &inStream)
     {
         for (int j = 0; j < chessBoard[i].size(); ++j)
         {
-            cout << chessBoard[i][j];
+            cout << chessBoard[i][j] << " ";
         }
         cout << std::endl;
     }
