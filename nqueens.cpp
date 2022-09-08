@@ -113,6 +113,9 @@ void readFile(std::ifstream &inStream, vector<vector<bool>> &chessBoard, int N)
         chessBoard.push_back(temp);
     }
 
+    // close the file stream
+    inStream.close();
+
     return;
 }
 
@@ -146,5 +149,3 @@ int findN(std::ifstream &inStream)
 
     return;
  }
-
- 
