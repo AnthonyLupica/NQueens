@@ -28,29 +28,9 @@ int main()
 {
     // in-file pointer
     std::ifstream inStream;
-
-    // prompt for the file name
-    char fileName[16];
-    cout << "Enter the file name for input into NQueens (maximum of 15 characters): ";
   
     // flag for loops
     bool isValid;
-
-    // validate fileName 
-    do 
-    {
-        isValid = true;
-        
-        cin >> fileName;
-        if (strlen(fileName) > 15)
-        {
-            cout << "invalid entry: ";
-            isValid = false;
-
-            cin.clear();
-            cin.ignore(10000, '\n');
-        }
-    } while (!isValid);
 
     // prompt for dimensions
     int N = 0;
@@ -72,8 +52,8 @@ int main()
         }
     } while (!isValid);
   
-    // open the user's file 
-    inStream.open(fileName);
+    // open the file 
+    inStream.open("input.csv");
 
     // if file was successfully opened
     if (inStream)
