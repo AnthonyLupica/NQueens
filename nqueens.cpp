@@ -6,8 +6,7 @@
              representing a chessboard of size N x N. If a solution is found for N queens, 
              a .csv solution is produced. Otherwise, no solution is displayed.
     
-    Information: This program was built and tested in an Ubuntu shell. It will ask the user to specify the name
-                 of the .csv (and path if necessary), as well as the dimensions of the board.
+    Information: This program was built and tested in an Ubuntu shell with CMAKE. 
 */
 
 #include <iostream>
@@ -20,9 +19,9 @@ using std::cout;
 using std::cin;
 using std::vector;
 
-void readFile(std::ifstream &inStream, vector<vector<bool>> &chessBoard, int N); 
+void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N); 
 int findN();
-void display(const vector<vector<bool>> &chessBoard);
+void display(const vector<vector<char>> &chessBoard);
 
 int main()
 {
@@ -35,8 +34,8 @@ int main()
         // find what N is for the .csv input (assumes a square layout)
         int N = findN();
         
-        // define a 2d vector (vector of vectors of bools)
-        vector<vector<bool>> chessBoard;
+        // define a 2d vector (vector of vectors of chars)
+        vector<vector<char>> chessBoard;
 
         // pass in the stream object and 2d vector by ref,
         // and the dimensions of the board
@@ -57,20 +56,29 @@ int main()
     return 0;
 }
 
-void readFile(std::ifstream &inStream, vector<vector<bool>> &chessBoard, int N)
+void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
 {
-    bool getBool;
+    char getChar;
+    
+    // temp vector to store inner vectors 
+    vector<char> temp;
 
     // fill the inner vectors, then use them to fill the outer vector 
     for (int i = 0; i < N; ++i)
     {
-        vector<bool> temp;
         for (int j = 0; j < N; ++j)
         {
-            inStream >> getBool;
-            temp.push_back(getBool);
+            // use loop to parse through commas
+            do 
+            {
+                inStream.get(getChar);
+            } while (getChar != '0' && getChar != '1');
+            temp.push_back(getChar);
         }
         chessBoard.push_back(temp);
+        
+        // clear the temp vector 
+        temp.clear();
     }
 
     return;
@@ -102,8 +110,10 @@ int findN()
     return N;
  }
  
- void display(const vector<vector<bool>> &chessBoard)
+ void display(const vector<vector<char>> &chessBoard)
  {
+    cout << "\ninput file--> \n\n";
+
     // chessBoard[i].size() checks the size of the vector rows
     for (int i = 0; i < chessBoard.size(); ++i)
     {
@@ -111,8 +121,10 @@ int findN()
         {
             cout << chessBoard[i][j] << " ";
         }
-        cout << std::endl;
+        cout << "\n";
     }
+
+    cout << "\n";
 
     return;
  }
