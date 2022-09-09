@@ -7,6 +7,10 @@
              a .csv solution is produced. Otherwise, no solution is displayed.
     
     Information: This program was built and tested in an Ubuntu shell with CMAKE. 
+                 It assumes the name of the input file is "input.csv" and is present in the build 
+                 directory.
+                 It also does not validate against the occurance of a non-square input,
+                 or input that does not adhere to strictly comma separated 0's and 1's.
 */
 
 #include <iostream>
