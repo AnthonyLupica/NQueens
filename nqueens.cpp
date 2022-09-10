@@ -16,7 +16,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cctype> // isdigit() and isprint()
+#include <cctype>        // isdigit() and isprint()
+#include <unordered_set> // for sets of columns, positive, and negative diagonals used 
 
 using std::ifstream;
 using std::cout;
@@ -27,6 +28,15 @@ void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N);
 int findN();
 void display(const vector<vector<char>> &chessBoard);
 int NQueens(int N);
+
+// namepace containing sets for queen collisions
+// each queen must occupy its own row/column, and positive/negative diagonal
+namespace Sets
+{
+    std::unordered_set<int> colSet;     // store column index 
+    std::unordered_set<int> posDiagSet; // Row + Col = constant for a given positive diagonal
+    std::unordered_set<int> negDiagSet; // Row - Col = constant for a given negative diagonal
+}
 
 int main()
 {
@@ -72,6 +82,8 @@ int main()
 */
 void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
 {
+    using namespace Sets;
+
     char getChar;
     
     // temp vector to store inner vectors 
@@ -87,6 +99,19 @@ void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
             {
                 inStream.get(getChar);
             } while (getChar != '0' && getChar != '1');
+            
+            // intitial queen added to sets
+            if (getChar == '1')
+            {
+                // store col position
+                colSet.insert(j);
+
+                // store pos diag 
+                posDiagSet.insert(i + j);
+
+                // store neg diag
+                negDiagSet.insert(i - j);
+            }
             temp.push_back(getChar);
         }
         chessBoard.push_back(temp);
