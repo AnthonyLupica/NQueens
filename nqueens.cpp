@@ -26,6 +26,7 @@ using std::vector;
 void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N); 
 int findN();
 void display(const vector<vector<char>> &chessBoard);
+int NQueens(int N);
 
 int main()
 {
@@ -60,6 +61,15 @@ int main()
     return 0;
 }
 
+/*  
+    pre: assumes the existence of a file titled "input.csv" for input,
+        and expects that it will be formatted in an N x N layout.
+        It takes in an ifstream by reference and a vector of vectors of chars by reference.
+        It also takes in N (returned by findN()), and uses it as the for-condition.
+    post: Nested for-loops populate the vector from the stream. The inner-for fills the inner 
+          vectors, which are then pushed to the outer vector. The global sets for column pos, 
+          negative diagonal, and positive diagonal are updated for the initial queen position.
+*/
 void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
 {
     char getChar;
@@ -88,6 +98,13 @@ void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
     return;
 }
 
+/* 
+    pre: assumes the existence of a file titled "input.csv" for input,
+        and expects that it will be formatted in an N x N layout.
+        If the values are not arranged in a square, the file will 
+        be truncated to the length of the first row.
+    post: The dimensions of the file are returned.
+*/
 int findN()
 {
     // declare and initialize temp file stream
@@ -114,6 +131,10 @@ int findN()
     return N;
  }
  
+ /* 
+    pre: takes in the 2d vector containing the file input by reference.
+    post: the 2d vector is output to the screen.
+ */
  void display(const vector<vector<char>> &chessBoard)
  {
     cout << "\ninput file--> \n\n";
@@ -132,3 +153,8 @@ int findN()
 
     return;
  }
+
+int NQueens(int N)
+{
+
+}
