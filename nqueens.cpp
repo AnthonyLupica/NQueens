@@ -13,7 +13,7 @@
                  or input that does not adhere to strictly comma-separated 0's and 1's.
                  It anticipates that 1 initial queen has been placed in some starting position as a given condition.
 
-                 This implementation uses three std::unordered_sets to track column, positive diagonal, and negative 
+                 This implementation uses four std::unordered_sets to track row/column, positive diagonal, and negative 
                  diagonal information for each placed queen.
 */
 
@@ -21,7 +21,7 @@
 #include <fstream>
 #include <vector>
 #include <cctype>        // isdigit() and isprint()
-#include <unordered_set> // for sets of columns, positive, and negative diagonals used 
+#include <unordered_set> // for sets of rows/columns, positive, and negative diagonals used 
 
 using std::ifstream;
 using std::cout;
@@ -31,13 +31,14 @@ using std::vector;
 void readFile(std::ifstream &inStream, int N); 
 int findN();
 void display();
-int NQueens(int N);
+int NQueens(int row);
 
 // namepace containing sets for queen collisions
 // each queen must occupy its own row/column, and positive/negative diagonal
 namespace QueenPos
 {
     std::unordered_set<int> colSet;     // store column index 
+    std::unordered_set<int> rowSet;     // store row index
     std::unordered_set<int> posDiagSet; // Row + Col = constant for a given positive diagonal
     std::unordered_set<int> negDiagSet; // Row - Col = constant for a given negative diagonal
     
@@ -67,13 +68,14 @@ int main()
         inStream.close();
 
         // echo the chessboard structure to standard output
+        cout << "\ninput file--> \n\n";
         display();
 
         // submit instatiated chessBoard to the backtracking recursive algorithm
         // if returned 1, output the solution board
-        if (NQueens(N) == 1)
+        if (NQueens(0) == 1)
         {
-            cout << "Solution found for an " << N << " by " << N << " chess board, with a given initial queen at (" 
+            cout << "Solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
                  << QueenPos::arr[0] << ", " << QueenPos::arr[1] << ")\n\n";
             
             display();
@@ -82,9 +84,9 @@ int main()
         // otherwise, no solution could be found for the given N and/or the initial queen position provided 
         else 
         {
-            cout << "No solution found for an " << N << " by " << N << " chess board, with a given initial queen at (" 
+            cout << "No solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
                  << QueenPos::arr[0] << ", " << QueenPos::arr[1] << ")\n\n";
-        }
+        } 
     }
 
     else 
@@ -131,7 +133,8 @@ void readFile(std::ifstream &inStream, int N)
                 arr[0] = i;
                 arr[1] = j;
                 
-                // store col position
+                // store row and col position
+                rowSet.insert(i);
                 colSet.insert(j);
 
                 // store pos diag 
@@ -190,8 +193,6 @@ int findN()
  */
  void display()
  {
-    cout << "\ninput file--> \n\n";
-
     // chessBoard[i].size() checks the size of the vector rows
     for (int i = 0; i < chessBoard.size(); ++i)
     {
@@ -207,54 +208,57 @@ int findN()
     return;
  }
 
-int NQueens(int N)
+int NQueens(int row)
 {
     using namespace QueenPos;
 
+    int col;
+
     // base case: the final row iteration has been reached. Solution found.
-    if (N == 0)
+    if (row == chessBoard.size())
     {
         return 1;
     }
 
-    // outer (rows) for-loop
-    for (int i = 0; i < N; ++i)
+    // columns for-loop
+    for (col = 0; col < chessBoard[row].size(); ++col)
     {
-        // inner (columns) for-loop
-        for (int j = 0; j < N; ++j)
+        // if queen can be placed, place it 
+        if ((rowSet.count(row) == 0) && (colSet.count(col) == 0) && (posDiagSet.count(row + col) == 0) && (negDiagSet.count(row - col) == 0))
         {
-            // if queen can be placed, place it 
-            if ((colSet.count(j) == 0) && (posDiagSet.count(i + j) == 0) && (negDiagSet.count(i - j) == 0))
-            {
-                chessBoard[i][j] = 1;
+            chessBoard[row][col] = 1;
 
-                // add this queen's location parameters to each set
-                colSet.insert(j);
-                posDiagSet.insert(i + j);
-                negDiagSet.insert(i - j);
-
-                if (NQueens(N - 1) == 1)
-                {
-                    // solution found 
-                    return 1;
-                }
-
-                // else, dead end, and backtrack
-                else
-                {
-                    // overwrite placed queen 
-                    chessBoard[i][j] = 0;
-
-                    // erase this queen's location parameters from each set
-                    colSet.erase(j);
-                    posDiagSet.erase(i + j);
-                    negDiagSet.erase(i - j);
-                }
-            }
-        
+            // add this queen's location parameters to each set
+            rowSet.insert(row);
+            colSet.insert(col);
+            posDiagSet.insert(row + col);
+            negDiagSet.insert(row - col);
         }
     }
+    if (rowSet.count(row) == 0)
+    {
+        // indicate failure to place a queen in each row 
+        return 0;
+    }
 
-    // if this is reached, no solution has been found, and all possible decision paths have been exhausted.
-    return 0;
+    else 
+    {
+        // else, we should continue with next row
+        return 1;
+    }
+    
+
+    // recursive call
+    if (!NQueens(row + 1))
+    {
+        // if this point is reached, backtrack
+        // overwrite placed queen 
+        chessBoard[row][col] = 0;
+
+        // erase this queen's location parameters from each set
+        rowSet.erase(row);
+        colSet.erase(col);
+        posDiagSet.erase(row + col);
+        negDiagSet.erase(row - col);
+    }
 }
