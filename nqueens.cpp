@@ -42,8 +42,8 @@ namespace QueenPos
     std::unordered_set<int> posDiagSet; // Row + Col = constant for a given positive diagonal
     std::unordered_set<int> negDiagSet; // Row - Col = constant for a given negative diagonal
     
-    // starting queen position (arr[0] = row && arr[1] = column)
-    int arr[2];
+    // starting queen position (initQueen[0] = row && initQueen[1] = column)
+    int initQueen[2];
 }
 
 // define a 2d vector (vector of vectors of chars)
@@ -75,8 +75,9 @@ int main()
         // if returned 1, output the solution board
         if (NQueens(0) == 1)
         {
+            
             cout << "Solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
-                 << QueenPos::arr[0] << ", " << QueenPos::arr[1] << ")\n\n";
+                    << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ")\n\n";
             
             display();
         }
@@ -85,7 +86,7 @@ int main()
         else 
         {
             cout << "No solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
-                 << QueenPos::arr[0] << ", " << QueenPos::arr[1] << ")\n\n";
+                 << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ")\n\n";
         } 
     }
 
@@ -130,8 +131,8 @@ void readFile(std::ifstream &inStream, int N)
             if (getChar == '1')
             {
                 // store initial queen pos for later display
-                arr[0] = i;
-                arr[1] = j;
+                initQueen[0] = i;
+                initQueen[1] = j;
                 
                 // store row and col position
                 rowSet.insert(i);
@@ -225,7 +226,7 @@ int NQueens(int row)
             // ensure that this is not the initial (given) queen's row.
             // In the event that it were, we should not concern ourselves
             // with placing the queen. 
-            if (row != arr[0])
+            if (row != initQueen[0])
             {
                 // place a queen if it will not be attacked by another 
                 // note: character '1' is 49 in dec
