@@ -11,6 +11,10 @@
                  directory.
                  It also does not validate against the occurance of a non-square input,
                  or input that does not adhere to strictly comma-separated 0's and 1's.
+                 It anticipates that 1 initial queen has been placed in some starting position as a given condition.
+
+                 This implementation uses three std::unordered_sets to track column, positive diagonal, and negative 
+                 diagonal information for each placed queen.
 */
 
 #include <iostream>
@@ -24,19 +28,25 @@ using std::cout;
 using std::cin;
 using std::vector;
 
-void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N); 
+void readFile(std::ifstream &inStream, int N); 
 int findN();
-void display(const vector<vector<char>> &chessBoard);
+void display();
 int NQueens(int N);
 
 // namepace containing sets for queen collisions
 // each queen must occupy its own row/column, and positive/negative diagonal
-namespace Sets
+namespace QueenPos
 {
     std::unordered_set<int> colSet;     // store column index 
     std::unordered_set<int> posDiagSet; // Row + Col = constant for a given positive diagonal
     std::unordered_set<int> negDiagSet; // Row - Col = constant for a given negative diagonal
+    
+    // starting queen position (arr[0] = row && arr[1] = column)
+    int arr[2];
 }
+
+// define a 2d vector (vector of vectors of chars)
+vector<vector<char>> chessBoard;
 
 int main()
 {
@@ -49,18 +59,32 @@ int main()
         // find what N is for the .csv input (assumes a square layout)
         int N = findN();
         
-        // define a 2d vector (vector of vectors of chars)
-        vector<vector<char>> chessBoard;
-
         // pass in the stream object and 2d vector by ref,
         // and the dimensions of the board
-        readFile(inStream, chessBoard, N);
+        readFile(inStream, N);
 
         // close the file stream
         inStream.close();
 
         // echo the chessboard structure to standard output
-        display(chessBoard);
+        display();
+
+        // submit instatiated chessBoard to the backtracking recursive algorithm
+        // if returned 1, output the solution board
+        if (NQueens(N) == 1)
+        {
+            cout << "Solution found for an " << N << " by " << N << " chess board, with a given initial queen at (" 
+                 << QueenPos::arr[0] << ", " << QueenPos::arr[1] << ")\n\n";
+            
+            display();
+        }
+
+        // otherwise, no solution could be found for the given N and/or the initial queen position provided 
+        else 
+        {
+            cout << "No solution found for an " << N << " by " << N << " chess board, with a given initial queen at (" 
+                 << QueenPos::arr[0] << ", " << QueenPos::arr[1] << ")\n\n";
+        }
     }
 
     else 
@@ -80,9 +104,9 @@ int main()
           vectors, which are then pushed to the outer vector. The global sets for column pos, 
           negative diagonal, and positive diagonal are updated for the initial queen position.
 */
-void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
+void readFile(std::ifstream &inStream, int N)
 {
-    using namespace Sets;
+    using namespace QueenPos;
 
     char getChar;
     
@@ -103,6 +127,10 @@ void readFile(std::ifstream &inStream, vector<vector<char>> &chessBoard, int N)
             // intitial queen added to sets
             if (getChar == '1')
             {
+                // store initial queen pos for later display
+                arr[0] = i;
+                arr[1] = j;
+                
                 // store col position
                 colSet.insert(j);
 
@@ -160,7 +188,7 @@ int findN()
     pre: takes in the 2d vector containing the file input by reference.
     post: the 2d vector is output to the screen.
  */
- void display(const vector<vector<char>> &chessBoard)
+ void display()
  {
     cout << "\ninput file--> \n\n";
 
@@ -181,5 +209,52 @@ int findN()
 
 int NQueens(int N)
 {
+    using namespace QueenPos;
 
+    // base case: the final row iteration has been reached. Solution found.
+    if (N == 0)
+    {
+        return 1;
+    }
+
+    // outer (rows) for-loop
+    for (int i = 0; i < N; ++i)
+    {
+        // inner (columns) for-loop
+        for (int j = 0; j < N; ++j)
+        {
+            // if queen can be placed, place it 
+            if ((colSet.count(j) == 0) && (posDiagSet.count(i + j) == 0) && (negDiagSet.count(i - j) == 0))
+            {
+                chessBoard[i][j] = 1;
+
+                // add this queen's location parameters to each set
+                colSet.insert(j);
+                posDiagSet.insert(i + j);
+                negDiagSet.insert(i - j);
+
+                if (NQueens(N - 1) == 1)
+                {
+                    // solution found 
+                    return 1;
+                }
+
+                // else, dead end, and backtrack
+                else
+                {
+                    // overwrite placed queen 
+                    chessBoard[i][j] = 0;
+
+                    // erase this queen's location parameters from each set
+                    colSet.erase(j);
+                    posDiagSet.erase(i + j);
+                    negDiagSet.erase(i - j);
+                }
+            }
+        
+        }
+    }
+
+    // if this is reached, no solution has been found, and all possible decision paths have been exhausted.
+    return 0;
 }
