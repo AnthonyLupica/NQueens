@@ -75,7 +75,6 @@ int main()
         // if returned 1, output the solution board
         if (NQueens(0) == 1)
         {
-            
             cout << "Solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
                     << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ")\n\n";
             
