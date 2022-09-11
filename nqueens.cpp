@@ -37,8 +37,8 @@ int NQueens(int row);
 // each queen must occupy its own row/column, and positive/negative diagonal
 namespace QueenPos
 {
-    std::unordered_set<int> colSet;     // store column index 
     std::unordered_set<int> rowSet;     // store row index
+    std::unordered_set<int> colSet;     // store column index 
     std::unordered_set<int> posDiagSet; // Row + Col = constant for a given positive diagonal
     std::unordered_set<int> negDiagSet; // Row - Col = constant for a given negative diagonal
     
@@ -212,53 +212,47 @@ int NQueens(int row)
 {
     using namespace QueenPos;
 
-    int col;
-
-    // base case: the final row iteration has been reached. Solution found.
+    // base case: if all queens have been placed, return true
     if (row == chessBoard.size())
     {
         return 1;
     }
 
-    // columns for-loop
-    for (col = 0; col < chessBoard[row].size(); ++col)
+    for (int col = 0; col < chessBoard[row].size(); ++col)
     {
-        // if queen can be placed, place it 
-        if ((rowSet.count(row) == 0) && (colSet.count(col) == 0) && (posDiagSet.count(row + col) == 0) && (negDiagSet.count(row - col) == 0))
+        if ((colSet.count(col) == 0) && (negDiagSet.count(row - col) == 0) && (posDiagSet.count(row + col) == 0))
         {
-            chessBoard[row][col] = 1;
+            // ensure that this is not the initial (given) queen's row.
+            // In the event that it were, we should not concern ourselves
+            // with placing the queen. 
+            if (row != arr[0])
+            {
+                // place a queen if it will not be attacked by another 
+                // note: character '1' is 49 in dec
+                chessBoard[row][col] = 49;
 
-            // add this queen's location parameters to each set
-            rowSet.insert(row);
-            colSet.insert(col);
-            posDiagSet.insert(row + col);
-            negDiagSet.insert(row - col);
+                rowSet.insert(row);
+                colSet.insert(col);
+                negDiagSet.insert(row - col);
+                posDiagSet.insert(row + col);
+            }
+            
+            // recursive call
+            if (NQueens(row + 1))
+            {
+                return 1;
+            }
+
+            // if this path did not terminate in a solution, backtrack
+            chessBoard[row][col] = 0;
+
+            rowSet.erase(row);
+            colSet.erase(col);
+            negDiagSet.erase(row - col);
+            posDiagSet.erase(row + col);
         }
     }
-    if (rowSet.count(row) == 0)
-    {
-        // indicate failure to place a queen in each row 
-        return 0;
-    }
 
-    else 
-    {
-        // else, we should continue with next row
-        return 1;
-    }
-    
-
-    // recursive call
-    if (!NQueens(row + 1))
-    {
-        // if this point is reached, backtrack
-        // overwrite placed queen 
-        chessBoard[row][col] = 0;
-
-        // erase this queen's location parameters from each set
-        rowSet.erase(row);
-        colSet.erase(col);
-        posDiagSet.erase(row + col);
-        negDiagSet.erase(row - col);
-    }
+    // if this is reached, we exited leaving a row queen-less
+    return 0;
 }
