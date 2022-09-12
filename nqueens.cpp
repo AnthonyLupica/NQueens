@@ -29,7 +29,7 @@
 #include <fstream>
 #include <vector>
 #include <cctype>        // isdigit() and isprint()
-#include <unordered_set> // for sets of rows/columns, positive, and negative diagonals used 
+#include <unordered_set> // for sets of rows/columns, and positive/negative diagonals 
 
 using std::ifstream;
 using std::cout;
