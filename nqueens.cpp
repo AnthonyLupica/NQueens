@@ -237,11 +237,6 @@ int NQueens(int row)
         // being backtracked (it will never enter the if-block for placing or backtracking queens).
         if (row == initQueen[0] && col == initQueen[1])
         {
-            cout << "Initial queen found (" << row << ", " << col << "). No additional queens"
-                 << " shall be placed in this row. Recursive call imminent...\n";
-
-            display();
-
             // recursive call
             if (NQueens(row + 1))
             {
@@ -254,16 +249,13 @@ int NQueens(int row)
         {
             // note: character '1' is 49 in dec
             chessBoard[row][col] = 49;
-
+            
+            // update sets
             rowSet.insert(row);
             colSet.insert(col);
             negDiagSet.insert(row - col);
             posDiagSet.insert(row + col);
 
-            cout << "Just placed (" << row << ", " << col << "). Recursive call imminent...\n";
-            
-            display();
-            
             // recursive call
             if (NQueens(row + 1))
             {
@@ -275,17 +267,14 @@ int NQueens(int row)
             // note: character '0' is 48 in dec
             chessBoard[row][col] = 48;
 
+            // remove previous update to sets
             rowSet.erase(row);
             colSet.erase(col);
             negDiagSet.erase(row - col);
             posDiagSet.erase(row + col);
-
-            cout << "Backtracked the queen at (" << row << ", " << col << ")...\n";
-            
-            display();
         }
     }
 
-    // if this is reached, we exited leaving a row queen-less
+    // if this is reached, we had to backtrack (if there is no solution, this will unroll all the way to the initial call)
     return 0;
 }
