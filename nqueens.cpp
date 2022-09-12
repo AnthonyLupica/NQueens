@@ -233,7 +233,7 @@ int NQueens(int row)
     {
         // first check that we have not iterated into the initial queen's box. 
         // Upon this, we immediately perform a recursive call to advance the row.
-        // We disallow the initial queen from being overwritten, so we shielf it from 
+        // We disallow the initial queen from being overwritten, so we shield it from 
         // being backtracked (it will never enter the if-block for placing or backtracking queens).
         if (row == initQueen[0] && col == initQueen[1])
         {
