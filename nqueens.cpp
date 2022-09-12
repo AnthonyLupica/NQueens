@@ -46,7 +46,7 @@ namespace QueenPos
     int initQueen[2];
 }
 
-// define a 2d vector (vector of vectors of chars)
+// define a 2d vector (vector of vectors of chars) for file io
 vector<vector<char>> chessBoard;
 
 int main()
@@ -210,6 +210,7 @@ int findN()
 
 int NQueens(int row)
 {
+    // qualify names for queen position variables
     using namespace QueenPos;
 
     // base case: if all queens have been placed, return true
@@ -218,24 +219,42 @@ int NQueens(int row)
         return 1;
     }
 
+    // for loop for iterating columns.
+    // note: when a queen is backtracked, we return and resume in that frame at the increment of col.
     for (int col = 0; col < chessBoard[row].size(); ++col)
     {
-        if ((colSet.count(col) == 0) && (negDiagSet.count(row - col) == 0) && (posDiagSet.count(row + col) == 0))
+        // first check that we have not iterated into the initial queen's box. 
+        // Upon this, we immediately perform a recursive call to advance the row.
+        // We disallow the initial queen from being overwritten, so we shielf it from 
+        // being backtracked (it will never enter the if-block for placing or backtracking queens).
+        if (row == initQueen[0] && col == initQueen[1])
         {
-            // ensure that this is not the initial (given) queen's row.
-            // In the event that it were, we should not concern ourselves
-            // with placing the queen. 
-            if (row != initQueen[0])
-            {
-                // place a queen if it will not be attacked by another 
-                // note: character '1' is 49 in dec
-                chessBoard[row][col] = 49;
+            cout << "Initial queen found (" << row << ", " << col << "). No additional queens"
+                 << " shall be placed in this row. Recursive call imminent...\n";
 
-                rowSet.insert(row);
-                colSet.insert(col);
-                negDiagSet.insert(row - col);
-                posDiagSet.insert(row + col);
+            display();
+
+            // recursive call
+            if (NQueens(row + 1))
+            {
+                return 1;
             }
+        }
+
+        // place a queen if it will not be attacked by another (no row/column, or pos/neg diagonal conflict)
+        if ((rowSet.count(row) == 0) && (colSet.count(col) == 0) && (negDiagSet.count(row - col) == 0) && (posDiagSet.count(row + col) == 0))
+        {
+            // note: character '1' is 49 in dec
+            chessBoard[row][col] = 49;
+
+            rowSet.insert(row);
+            colSet.insert(col);
+            negDiagSet.insert(row - col);
+            posDiagSet.insert(row + col);
+
+            cout << "Just placed (" << row << ", " << col << "). Recursive call imminent...\n";
+            
+            display();
             
             // recursive call
             if (NQueens(row + 1))
@@ -243,13 +262,19 @@ int NQueens(int row)
                 return 1;
             }
 
-            // if this path did not terminate in a solution, backtrack
-            chessBoard[row][col] = 0;
+            // If this path did not resolve in a complete solution, backtrack the previous queen...
+            
+            // note: character '0' is 48 in dec
+            chessBoard[row][col] = 48;
 
             rowSet.erase(row);
             colSet.erase(col);
             negDiagSet.erase(row - col);
             posDiagSet.erase(row + col);
+
+            cout << "Backtracked the queen at (" << row << ", " << col << ")...\n";
+            
+            display();
         }
     }
 
