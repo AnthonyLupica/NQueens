@@ -21,7 +21,7 @@
     Implementation:
 
                  This implementation uses four std::unordered_sets to track row/column and positive/negative 
-                 diagonal information for each placed queen. These sets are used for constant time lookup
+                 diagonal information for each queen. These sets are used for constant time lookup
                  for the validity of placing a queen. 
 */
 
@@ -29,7 +29,7 @@
 #include <fstream>
 #include <vector>
 #include <cctype>        // isdigit() and isprint()
-#include <unordered_set> // for sets of rows/columns, positive, and negative diagonals used 
+#include <unordered_set> // for sets of rows/columns, and positive/negative diagonals 
 
 using std::ifstream;
 using std::cout;
@@ -111,7 +111,8 @@ int main()
         It takes in an ifstream by reference and a vector of vectors of chars by reference.
         It also takes in N (returned by findN()), and uses it as the for-condition.
     post: Nested for-loops populate the vector from the stream. The inner-for fills the inner 
-          vectors, which are then pushed to the outer vector. The global sets for column pos, 
+          vectors, which are then pushed to the outer vector. The initial queen's position is saved.
+          Additionally, the QueenPos:: sets for row pos, column pos, 
           negative diagonal, and positive diagonal are updated for the initial queen position.
 */
 void readFile(std::ifstream &inStream, int N)
