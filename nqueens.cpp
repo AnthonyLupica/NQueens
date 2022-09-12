@@ -21,7 +21,7 @@
     Implementation:
 
                  This implementation uses four std::unordered_sets to track row/column and positive/negative 
-                 diagonal information for each placed queen. These sets are used for constant time lookup
+                 diagonal information for each queen. These sets are used for constant time lookup
                  for the validity of placing a queen. 
 */
 
