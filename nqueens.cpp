@@ -110,6 +110,7 @@ int main()
          and expects that it will be formatted in an N x N layout.
          It takes in an ifstream by reference and a vector of vectors of chars by reference.
          It also takes in N (returned by findN()), and uses it as the for-condition.
+    
     post: Nested for-loops populate the vector from the stream. The inner-for fills the inner 
           vectors, which are then pushed to the outer vector. The initial queen's position is saved.
           Additionally, the QueenPos:: sets for row pos, column pos, 
@@ -168,6 +169,7 @@ void readFile(std::ifstream &inStream, int N)
          and expects that it will be formatted in an N x N layout.
          If the values are not arranged in a square, the file will 
          be truncated to the length of the first row.
+    
     post: The dimensions of the file are returned.
 */
 int findN()
@@ -198,6 +200,7 @@ int findN()
  
  /* 
     pre: takes in the 2d vector containing the file input by reference.
+    
     post: the 2d vector is output to the screen.
  */
  void display()
@@ -218,16 +221,17 @@ int findN()
  }
 
 /* 
-    pre: Nqueens() is a recursive backtracking algorithm that uses rows as the recursion parameter (incrementing the row for each call).
-         Row begins at 0, and increments until N (The dimensions of the board).
+    pre: Nqueens() is a recursive backtracking algorithm that uses rows as the recursion parameter 
+         (incrementing the row for each call). Row begins at 0, and increments until N (The dimensions of the board).
          This implementation requires a number of things to be true, namely a 2D vector declared in QueenPos::, which consists 
          entirely of 0's (not queens) and a single 1 (representing a *mandatory* given initial queen). These values must also be
          arranged in a square, analagous to a chess board. 
-    post: The recursive solution expands out the *frontier in depth-first fashion. If a point is reached where a queen cannot be 
+    
+    post: The recursive solution expands out the frontier[#] in depth-first fashion. If a point is reached where a queen cannot be 
           placed safely, each stack frame is "backtracked" until a valid queen can be placed with which to proceed.
           The solution, if possible for the input, will be indicated by returning a 1 to the original caller. Otherwise, 0 is returned. 
         
-          * The set of actions that are possible from a given state.
+          #The set of actions that are possible from a given state.
 */     
 int NQueens(int row)
 {
