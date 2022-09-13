@@ -286,7 +286,7 @@ int NQueens(int row)
             negDiagSet.erase(row - col);
             posDiagSet.erase(row + col);
         }
-        // following a backtrack, attempt with next iteration of col
+        // following a backtrack, attempt with next iteration of col. If there is not a next iteration, no solution.
     }
 
     // if this is reached, we failed to place a queen in a row. Backtracking is necessary.
