@@ -7,10 +7,11 @@
              a .csv solution is produced. Otherwise, no solution is displayed.
     
     Information: This program was built and tested in an Ubuntu shell with CMake. 
+                 It contains very little validation for garbage input.
 
                  Assumptions made:
 
-                 * Assumes the name of the input file is "input.csv" and is present in the build 
+                 * The name of the input file is "input.csv" and is present in the build 
                    directory.
                  * Does not validate against the occurance of non-square input,
                    or input that does not adhere to strictly comma-separated 0's and 1's.
@@ -21,7 +22,7 @@
     Implementation:
 
                  This implementation uses four std::unordered_sets to track row/column and positive/negative 
-                 diagonal information for each queen. These sets are used for constant time lookup
+                 diagonal information for each queen. These sets are used for constant-time lookup
                  for the validity of placing a queen. 
 */
 
@@ -32,6 +33,7 @@
 #include <unordered_set> // for sets of rows/columns, and positive/negative diagonals 
 
 using std::ifstream;
+using std::ofstream;
 using std::cout;
 using std::cin;
 using std::vector;
@@ -39,6 +41,7 @@ using std::vector;
 void readFile(std::ifstream &inStream, int N); 
 int findN();
 void display();
+void display(std::ofstream &outStream); // overloaded display() for file IO
 int NQueens(int row);
 
 // namepace containing sets for queen collisions
@@ -54,7 +57,7 @@ namespace QueenPos
     int initQueen[2];
 }
 
-// define a 2d vector (vector of vectors of chars) for file io
+// define a 2d vector (vector of vectors of chars)
 vector<vector<char>> chessBoard;
 
 int main()
@@ -79,27 +82,46 @@ int main()
         cout << "\ninput file -->\n\n";
         display();
 
-        // submit instatiated chessBoard to the backtracking recursive algorithm
+        // submit instantiated chessBoard to the backtracking algorithm
         // if returned 1, output the solution board
         if (NQueens(0) == 1)
         {
-            cout << "Solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
-                    << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ") -->\n\n";
+            // declare and initialize a file to hold the solution board
+            ofstream outStream("solution.csv");
             
-            display();
+            // if file opened, stream the solution to the file 
+            if (outStream)
+            {
+                cout << "Solution found for the given " << N << " by " << N << " chess board, with an initial queen at (" 
+                     << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ") --> 'solution.csv'\n\n";
+            
+                display(outStream);
+
+                // close the file 
+                outStream.close();
+            }
+            
+            // backup plan if file IO fails (stream to the console)
+            else
+            {
+                cout << "Solution found for the given " << N << " by " << N << " chess board, with an initial queen at (" 
+                     << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ") -->\n\n";
+            
+                display();
+            }
         }
 
-        // otherwise, no solution could be found for the given N and/or the initial queen position provided 
+        // otherwise, no solution could be found for N with the given initial queen position provided 
         else 
         {
-            cout << "No solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
+            cout << "No solution found for the given " << N << " by " << N << " chess board, with an initial queen at (" 
                  << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ")\n\n";
         } 
     }
 
     else 
     {
-        std::cerr << "File could not be opened\n";
+        std::cerr << "Input file could not be opened\n";
     }
 
     return 0;
@@ -165,7 +187,7 @@ void readFile(std::ifstream &inStream, int N)
 }
 
 /* 
-    pre: assumes the existence of a file titled "input.csv" for input,
+    pre: Assumes the existence of a file titled "input.csv" for input,
          and expects that it will be formatted in an N x N layout.
          If the values are not arranged in a square, the file will 
          be truncated to the length of the first row.
@@ -198,13 +220,13 @@ int findN()
     return N;
  }
  
- /* 
-    pre: takes in the 2d vector containing the file input by reference.
-    
-    post: the 2d vector is output to the screen.
- */
- void display()
- {
+/* 
+    pre: Assumes a globally declared 2D vector exists.
+
+    post: The 2d vector is output to the screen.
+*/
+void display()
+{
     // chessBoard[i].size() checks the size of the vector rows
     for (int i = 0; i < chessBoard.size(); ++i)
     {
@@ -218,7 +240,33 @@ int findN()
     cout << "\n";
 
     return;
- }
+}
+
+/* 
+    pre: Overloaded for output file streaming. Assumes a globally declared 2D vector exists.
+    
+    post: The 2d vector is output to the file, in .csv format.
+*/
+void display(std::ofstream &outStream)
+{
+    // chessBoard[i].size() checks the size of the vector rows
+    for (int i = 0; i < chessBoard.size(); ++i)
+    {
+        for (int j = 0; j < chessBoard[i].size(); ++j)
+        {
+            outStream << chessBoard[i][j];
+
+            // .csv formatting
+            if (j != chessBoard[i].size() - 1)
+            {
+                outStream << ",";
+            }
+        }
+        outStream << "\n";
+    }
+
+    return;
+}
 
 /* 
     pre: Nqueens() is a recursive backtracking algorithm that uses rows as the recursion parameter 
