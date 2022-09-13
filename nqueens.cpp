@@ -221,7 +221,7 @@ int findN()
  }
  
 /* 
-    pre: Assumes a globally declared 2D vector exists.
+    pre: Assumes a globally declared 2D vector named "chessBoard" exists.
 
     post: The 2d vector is output to the screen.
 */
@@ -243,7 +243,7 @@ void display()
 }
 
 /* 
-    pre: Overloaded for output file streaming. Assumes a globally declared 2D vector exists.
+    pre: Overloaded for output file streaming. Assumes a globally declared 2D vector named "chessBoard" exists.
     
     post: The 2d vector is output to the file, in .csv format.
 */
