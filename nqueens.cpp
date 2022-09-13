@@ -15,8 +15,8 @@
                  * Does not validate against the occurance of non-square input,
                    or input that does not adhere to strictly comma-separated 0's and 1's.
                    If these inputs are made, infinite recursion may arise.
-                 * One initial queen (1) must be present in some starting position as a given condition.
-                   Future versions may add functionality for the option to omit an initial queen.
+                 * Exactly one initial queen (represented by a 1) must be present in some starting position as a given condition.
+                   Future versions may add functionality for the option to omit an initial queen, or provide more than one.
     
     Implementation:
 
