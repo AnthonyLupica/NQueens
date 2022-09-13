@@ -76,7 +76,7 @@ int main()
         inStream.close();
 
         // echo the chessboard structure to standard output
-        cout << "\ninput file--> \n\n";
+        cout << "\ninput file -->\n\n";
         display();
 
         // submit instatiated chessBoard to the backtracking recursive algorithm
@@ -84,7 +84,7 @@ int main()
         if (NQueens(0) == 1)
         {
             cout << "Solution found for a " << N << " by " << N << " chess board, with a given initial queen at (" 
-                    << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ")\n\n";
+                    << QueenPos::initQueen[0] << ", " << QueenPos::initQueen[1] << ") -->\n\n";
             
             display();
         }
@@ -99,7 +99,7 @@ int main()
 
     else 
     {
-        std::cerr << "\nFile could not be opened\n";
+        std::cerr << "File could not be opened\n";
     }
 
     return 0;
@@ -107,9 +107,9 @@ int main()
 
 /*  
     pre: assumes the existence of a file titled "input.csv" for input,
-        and expects that it will be formatted in an N x N layout.
-        It takes in an ifstream by reference and a vector of vectors of chars by reference.
-        It also takes in N (returned by findN()), and uses it as the for-condition.
+         and expects that it will be formatted in an N x N layout.
+         It takes in an ifstream by reference and a vector of vectors of chars by reference.
+         It also takes in N (returned by findN()), and uses it as the for-condition.
     post: Nested for-loops populate the vector from the stream. The inner-for fills the inner 
           vectors, which are then pushed to the outer vector. The initial queen's position is saved.
           Additionally, the QueenPos:: sets for row pos, column pos, 
@@ -165,9 +165,9 @@ void readFile(std::ifstream &inStream, int N)
 
 /* 
     pre: assumes the existence of a file titled "input.csv" for input,
-        and expects that it will be formatted in an N x N layout.
-        If the values are not arranged in a square, the file will 
-        be truncated to the length of the first row.
+         and expects that it will be formatted in an N x N layout.
+         If the values are not arranged in a square, the file will 
+         be truncated to the length of the first row.
     post: The dimensions of the file are returned.
 */
 int findN()
@@ -217,6 +217,18 @@ int findN()
     return;
  }
 
+/* 
+    pre: Nqueens() is a recursive backtracking algorithm that uses rows as the recursion parameter (incrementing the row for each call).
+         Row begins at 0, and increments until N (The dimensions of the board).
+         This implementation requires a number of things to be true, namely a 2D vector declared in QueenPos::, which consists 
+         entirely of 0's (not queens) and a single 1 (representing a *mandatory* given initial queen). These values must also be
+         arranged in a square, analagous to a chess board. 
+    post: The recursive solution expands out the *frontier in depth-first fashion. If a point is reached where a queen cannot be 
+          placed safely, each stack frame is "backtracked" until a valid queen can be placed with which to proceed.
+          The solution, if possible for the input, will be indicated by returning a 1 to the original caller. Otherwise, 0 is returned. 
+        
+          * The set of actions that are possible from a given state.
+*/     
 int NQueens(int row)
 {
     // qualify names for queen position variables
@@ -257,7 +269,7 @@ int NQueens(int row)
             negDiagSet.insert(row - col);
             posDiagSet.insert(row + col);
 
-            // recursive call
+            // recursive call (will continue until NQueens(row + 1) returns false)
             if (NQueens(row + 1))
             {
                 return 1;
@@ -274,8 +286,9 @@ int NQueens(int row)
             negDiagSet.erase(row - col);
             posDiagSet.erase(row + col);
         }
+        // following a backtrack, attempt with next iteration of col
     }
 
-    // if this is reached, we had to backtrack (if there is no solution, this will unroll all the way to the initial call)
+    // if this is reached, we failed to place a queen in a row. Backtracking is necessary.
     return 0;
 }
