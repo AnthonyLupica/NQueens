@@ -1,5 +1,5 @@
-# NQueens
-Artificial Intelligence: Project 1
+## NQueens
+### Artificial Intelligence: Project 1
 
 Problem Description: The N-queens is the problem of placing N chess queens on an NxN chessboard so that no two queens attack each other. Wiki has detailed description of the problem and the history of the problem. https://en.wikipedia.org/wiki/Eight_queens_puzzle
 
